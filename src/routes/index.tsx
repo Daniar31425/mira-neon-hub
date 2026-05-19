@@ -6,7 +6,8 @@ import { PromptGrid } from "@/components/site/PromptGrid";
 import { RoiCalculator } from "@/components/site/RoiCalculator";
 import { QuickStartTerminal } from "@/components/site/QuickStartTerminal";
 import { Footer } from "@/components/site/Footer";
-import { AppProvider } from "@/lib/app-context";
+import { MiraEcosystem } from "@/components/site/MiraEcosystem";
+import { AppProvider, useApp } from "@/lib/app-context";
 
 export { MIRA_REF_URL, useApp } from "@/lib/app-context";
 
@@ -29,18 +30,27 @@ export const Route = createFileRoute("/")({
   }),
 });
 
+function IndexPage() {
+  const { lang } = useApp();
+
+  return (
+    <main className="min-h-screen bg-[#030712]">
+      <Navbar />
+      <Hero />
+      <TerminalShowcase />
+      <MiraEcosystem lang={lang} />
+      <RoiCalculator />
+      <QuickStartTerminal />
+      <PromptGrid />
+      <Footer />
+    </main>
+  );
+}
+
 function Index() {
   return (
     <AppProvider>
-      <main className="min-h-screen bg-[#030712]">
-        <Navbar />
-        <Hero />
-        <TerminalShowcase />
-        <RoiCalculator />
-        <QuickStartTerminal />
-        <PromptGrid />
-        <Footer />
-      </main>
+      <IndexPage />
     </AppProvider>
   );
 }
