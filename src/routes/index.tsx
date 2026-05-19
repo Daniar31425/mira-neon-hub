@@ -30,6 +30,11 @@ export const Route = createFileRoute("/")({
   }),
 });
 
+// MiraEcosystem already imported above.
+// Its rendering is already present in <IndexPage /> as: <MiraEcosystem lang={lang} />
+// Ensure placement is directly under <Hero />, i.e., after <Hero /> and before <TerminalShowcase />:
+
+// In IndexPage, update the order if needed:
 function IndexPage() {
   const { lang } = useApp();
 
@@ -37,8 +42,8 @@ function IndexPage() {
     <main className="min-h-screen bg-[#030712]">
       <Navbar />
       <Hero />
+      <MiraEcosystem lang={lang} /> {/* Moved here per instruction */}
       <TerminalShowcase />
-      <MiraEcosystem lang={lang} />
       <RoiCalculator />
       <QuickStartTerminal />
       <PromptGrid />
