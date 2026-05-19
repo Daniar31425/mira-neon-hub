@@ -330,7 +330,7 @@ function CardInner({
   className?: string;
 }) {
   return (
-    <div className={`flex h-full min-h-0 flex-col justify-between gap-5 ${className}`}>
+    <div className={`flex h-auto w-full flex-col justify-between gap-4 md:gap-5 lg:h-full lg:min-h-0 ${className}`}>
       {children}
     </div>
   );
@@ -348,7 +348,7 @@ function CardBody({
   className?: string;
 }) {
   return (
-    <div className={`flex min-h-0 flex-1 flex-col ${className}`}>{children}</div>
+    <div className={`flex w-full flex-col ${className} md:min-h-0 md:flex-1`}>{children}</div>
   );
 }
 
@@ -372,7 +372,7 @@ function HoloCard({
   return (
     <article
       id={id}
-      className={`group holo-card relative flex h-full min-h-0 flex-col ${GLOW_DROP[glow]} ${className}`}
+      className={`group holo-card relative flex h-auto w-full max-w-full flex-col lg:h-full lg:min-h-0 ${GLOW_DROP[glow]} ${className}`}
       style={{ zIndex: z }}
     >
       {/* Depth layer — back plate */}
@@ -389,10 +389,10 @@ function HoloCard({
 
       {/* Gradient border shell */}
       <div
-        className={`relative flex h-full min-h-0 flex-1 flex-col rounded-2xl bg-gradient-to-br p-[1px] ${GLOW_BORDER[glow]} transition-all duration-500 group-hover:p-[1.5px]`}
+        className={`relative flex h-auto w-full flex-col rounded-2xl bg-gradient-to-br p-[1px] lg:h-full lg:min-h-0 lg:flex-1 ${GLOW_BORDER[glow]} transition-all duration-500 group-hover:p-[1.5px]`}
         style={{ zIndex: 2 }}
       >
-        <div className="relative flex h-full min-h-0 flex-1 flex-col overflow-hidden rounded-[15px] bg-black/45 backdrop-blur-2xl">
+        <div className="relative flex h-auto w-full flex-col overflow-hidden rounded-[15px] bg-black/45 backdrop-blur-2xl lg:h-full lg:min-h-0 lg:flex-1">
           {/* Inner glass stack */}
           <div
             aria-hidden
@@ -406,7 +406,7 @@ function HoloCard({
             aria-hidden
             className="pointer-events-none absolute -bottom-10 -left-10 h-36 w-36 rounded-full bg-fuchsia-500/12 blur-3xl transition-opacity duration-500 group-hover:opacity-100 opacity-50"
           />
-          <div className="relative z-10 flex h-full min-h-0 flex-1 flex-col p-5 sm:p-6">
+          <div className="relative z-10 flex h-auto w-full flex-col p-4 sm:p-5 lg:h-full lg:min-h-0 lg:flex-1 lg:p-6">
             {children}
           </div>
         </div>
@@ -416,7 +416,11 @@ function HoloCard({
 }
 
 function HoloHeading({ children }: { children: React.ReactNode }) {
-  return <h3 className="holo-heading-gradient text-lg font-bold tracking-tight md:text-xl">{children}</h3>;
+  return (
+    <h3 className="holo-heading-gradient text-lg font-bold leading-snug tracking-tight sm:text-xl lg:text-xl">
+      {children}
+    </h3>
+  );
 }
 
 function KlingPreview({ data }: { data: (typeof T)["en"]["previews"]["kling"] }) {
@@ -470,6 +474,27 @@ function SeedreamPreview({ data }: { data: (typeof T)["en"]["previews"]["seedrea
   );
 }
 
+function GenerativePreviews({ previews }: { previews: (typeof T)["en"]["previews"] }) {
+  const glows = ["bg-cyan-500/20", "bg-fuchsia-500/20", "bg-amber-500/15"] as const;
+
+  return (
+    <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:snap-none md:grid md:min-h-[140px] md:grid-cols-3 md:gap-3 md:overflow-visible md:pb-0 lg:flex-1">
+      <div className="relative w-[min(82vw,280px)] shrink-0 snap-center md:w-auto md:shrink">
+        <div aria-hidden className={`absolute -inset-1 rounded-lg blur-md ${glows[0]}`} />
+        <KlingPreview data={previews.kling} />
+      </div>
+      <div className="relative w-[min(82vw,280px)] shrink-0 snap-center md:w-auto md:shrink">
+        <div aria-hidden className={`absolute -inset-1 rounded-lg blur-md ${glows[1]}`} />
+        <SeedreamPreview data={previews.seedream} />
+      </div>
+      <div className="relative w-[min(82vw,280px)] shrink-0 snap-center md:w-auto md:shrink">
+        <div aria-hidden className={`absolute -inset-1 rounded-lg blur-md ${glows[2]}`} />
+        <NanoPreview data={previews.nano} />
+      </div>
+    </div>
+  );
+}
+
 function NanoPreview({ data }: { data: (typeof T)["en"]["previews"]["nano"] }) {
   return (
     <div className="relative flex h-full min-h-[108px] flex-col overflow-hidden rounded-lg border border-amber-400/30 bg-black/60 shadow-[0_0_28px_rgba(251,191,36,0.2),inset_0_1px_0_rgba(251,191,36,0.15)]">
@@ -489,11 +514,72 @@ function NanoPreview({ data }: { data: (typeof T)["en"]["previews"]["nano"] }) {
 }
 
 const INTEGRATION_SLOTS = [
-  "left-[4%] top-[8%] sm:left-[2%] sm:top-[6%]",
-  "right-[4%] top-[8%] sm:right-[2%] sm:top-[6%]",
-  "left-[4%] bottom-[4%] sm:left-[2%] sm:bottom-[2%]",
-  "right-[4%] bottom-[4%] sm:right-[2%] sm:bottom-[2%]",
+  "lg:left-[2%] lg:top-[6%]",
+  "lg:right-[2%] lg:top-[6%]",
+  "lg:left-[2%] lg:bottom-[2%]",
+  "lg:right-[2%] lg:bottom-[2%]",
 ] as const;
+
+function IntegrationBadge({
+  item,
+  syncedLabel,
+  hoverBoost,
+  layout,
+  slotIndex = 0,
+}: {
+  item: (typeof T)["en"]["integrationsList"][number];
+  syncedLabel: string;
+  hoverBoost: string;
+  layout: "mobile" | "desktop";
+  slotIndex?: number;
+}) {
+  const Icon = item.icon;
+  if (layout === "mobile") {
+    return (
+      <button
+        type="button"
+        className={`flex min-h-[72px] w-full items-center gap-3 rounded-xl border border-zinc-800/80 bg-black/40 p-3 text-left backdrop-blur-sm transition-all active:scale-[0.98] ${item.ring} ${hoverBoost}`}
+      >
+        <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border bg-zinc-950/90 ${item.ring}`}>
+          <Icon className="h-5 w-5 text-zinc-100" />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block font-mono text-xs font-medium text-zinc-100">{item.full}</span>
+          <span className="mt-1 flex flex-wrap items-center gap-1.5">
+            <span className={`rounded px-1.5 py-0.5 font-mono text-[8px] uppercase ${item.chip}`}>
+              {item.category}
+            </span>
+            <span className="font-mono text-[8px] text-emerald-400/90">● {syncedLabel}</span>
+          </span>
+        </span>
+      </button>
+    );
+  }
+
+  const slot = INTEGRATION_SLOTS[slotIndex] ?? INTEGRATION_SLOTS[0];
+
+  return (
+    <button
+      type="button"
+      className={`group absolute z-30 flex w-[42%] max-w-[130px] flex-col items-center gap-1.5 transition-all duration-300 lg:w-auto lg:max-w-none ${slot} ${hoverBoost}`}
+    >
+      <span
+        className={`flex h-12 w-12 items-center justify-center rounded-2xl border bg-zinc-950/90 backdrop-blur-xl transition-transform duration-300 group-hover:scale-105 lg:h-14 lg:w-14 ${item.ring}`}
+      >
+        <Icon className="h-5 w-5 text-zinc-100 lg:h-6 lg:w-6" />
+      </span>
+      <span className="text-center font-mono text-[10px] leading-tight text-zinc-200 lg:text-xs">
+        {item.full}
+      </span>
+      <span className="flex flex-wrap items-center justify-center gap-1">
+        <span className={`rounded px-1.5 py-0.5 font-mono text-[8px] uppercase tracking-wide ${item.chip}`}>
+          {item.category}
+        </span>
+        <span className="font-mono text-[8px] text-emerald-400/90">● {syncedLabel}</span>
+      </span>
+    </button>
+  );
+}
 
 function IntegrationsFlow({
   items,
@@ -512,7 +598,30 @@ function IntegrationsFlow({
   };
 
   return (
-    <div className="relative mx-auto flex min-h-[200px] w-full max-w-md flex-1 flex-col justify-center py-2 lg:min-h-[220px] lg:max-w-none">
+    <>
+      {/* Mobile: hub + 2×2 grid — no absolute positioning */}
+      <div className="flex w-full flex-col gap-4 md:hidden">
+        <div className="flex flex-col items-center gap-2 py-1">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full border border-cyan-400/40 bg-black/70 shadow-[0_0_32px_rgba(34,211,238,0.3)] backdrop-blur-xl">
+            <Zap className="h-5 w-5 text-cyan-300" />
+          </div>
+          <span className="font-mono text-[9px] uppercase tracking-widest text-cyan-300/90">{hubLabel}</span>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          {items.map((item) => (
+            <IntegrationBadge
+              key={item.name}
+              item={item}
+              syncedLabel={syncedLabel}
+              hoverBoost={hoverBoost[item.glow]}
+              layout="mobile"
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Desktop: orbital hub (unchanged at md+) */}
+    <div className="relative mx-auto hidden min-h-[220px] w-full flex-1 flex-col justify-center py-2 md:flex lg:max-w-none">
       {/* Connection mesh */}
       <svg
         className="pointer-events-none absolute inset-0 z-0 h-full w-full"
@@ -565,33 +674,18 @@ function IntegrationsFlow({
       </div>
 
       {/* Orbiting badges */}
-      {items.map((item, i) => {
-        const Icon = item.icon;
-        const slot = INTEGRATION_SLOTS[i] ?? INTEGRATION_SLOTS[0];
-        return (
-          <button
-            key={item.name}
-            type="button"
-            className={`group absolute z-30 flex w-[42%] max-w-[130px] flex-col items-center gap-1.5 transition-all duration-300 sm:w-auto sm:max-w-none ${slot} ${hoverBoost[item.glow]}`}
-          >
-            <span
-              className={`flex h-12 w-12 items-center justify-center rounded-2xl border bg-zinc-950/90 backdrop-blur-xl transition-transform duration-300 group-hover:scale-105 sm:h-14 sm:w-14 ${item.ring}`}
-            >
-              <Icon className="h-5 w-5 text-zinc-100 sm:h-6 sm:w-6" />
-            </span>
-            <span className="text-center font-mono text-[10px] leading-tight text-zinc-200 sm:text-xs">
-              {item.full}
-            </span>
-            <span className="flex items-center gap-1">
-              <span className={`rounded px-1.5 py-0.5 font-mono text-[8px] uppercase tracking-wide ${item.chip}`}>
-                {item.category}
-              </span>
-              <span className="font-mono text-[8px] text-emerald-400/90">● {syncedLabel}</span>
-            </span>
-          </button>
-        );
-      })}
+      {items.map((item, i) => (
+        <IntegrationBadge
+          key={item.name}
+          item={item}
+          syncedLabel={syncedLabel}
+          hoverBoost={hoverBoost[item.glow]}
+          layout="desktop"
+          slotIndex={i}
+        />
+      ))}
     </div>
+    </>
   );
 }
 
@@ -606,12 +700,12 @@ function ExpertSwitcher({
   const active = roles.find((r) => r.id === activeId) ?? roles[0];
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-4">
+    <div className="flex w-full flex-col gap-3 md:min-h-0 md:flex-1 md:gap-4">
       <div className="flex shrink-0 items-center justify-between font-mono text-[10px] uppercase tracking-wider text-zinc-500">
         <span>{activeLabel}</span>
         <span className="text-fuchsia-300">{active?.label}</span>
       </div>
-      <div className="flex min-h-0 flex-1 flex-col justify-evenly gap-2.5">
+      <div className="flex flex-col gap-2.5 md:min-h-0 md:flex-1 md:justify-evenly">
         {roles.map((role) => {
           const isActive = role.id === activeId;
           const Icon = role.icon;
@@ -621,7 +715,7 @@ function ExpertSwitcher({
               type="button"
               onClick={() => setActiveId(role.id)}
               className={[
-                "relative flex w-full items-center gap-3 rounded-xl border px-3.5 py-3 text-left backdrop-blur-xl transition-all duration-300",
+                "relative flex min-h-[48px] w-full items-center gap-3 rounded-xl border px-3.5 py-3 text-left backdrop-blur-xl transition-all duration-300",
                 isActive
                   ? `z-20 border-fuchsia-400/50 bg-gradient-to-r ${role.accent} shadow-[0_0_24px_rgba(232,121,249,0.2)]`
                   : "z-10 border-zinc-800/80 bg-black/30 opacity-80 hover:border-zinc-600 hover:opacity-100",
@@ -651,7 +745,7 @@ export function MiraEcosystem({ lang }: MiraEcosystemProps) {
   const t = T[lang];
 
   return (
-    <section id="ecosystem" className="relative overflow-hidden px-6 py-28">
+    <section id="ecosystem" className="relative overflow-x-hidden px-4 py-16 sm:px-6 sm:py-20 md:py-28">
       {/* Ambient holographic field */}
       <div
         aria-hidden
@@ -662,20 +756,22 @@ export function MiraEcosystem({ lang }: MiraEcosystemProps) {
         className="pointer-events-none absolute bottom-0 right-0 h-64 w-64 rounded-full bg-fuchsia-600/10 blur-3xl"
       />
 
-      <div className="relative mx-auto max-w-6xl" style={{ zIndex: 5 }}>
-        <header className="mb-14 text-center md:text-left">
-          <p className="font-mono text-xs uppercase tracking-[0.25em] text-neon text-glow">{t.badge}</p>
-          <h2 className="holo-title-glitch holo-title-gradient mt-4 text-3xl font-bold tracking-tight md:text-5xl">
+      <div className="relative mx-auto w-full max-w-6xl min-w-0" style={{ zIndex: 5 }}>
+        <header className="mb-8 text-center sm:mb-10 md:mb-14 md:text-left">
+          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-neon text-glow sm:text-xs sm:tracking-[0.25em]">
+            {t.badge}
+          </p>
+          <h2 className="holo-title-glitch holo-title-gradient mt-3 text-2xl font-bold tracking-tight sm:mt-4 sm:text-3xl md:text-5xl">
             {t.title}
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-zinc-400 md:mx-0 md:text-base">
+          <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-zinc-400 sm:mt-4 md:mx-0 md:text-base">
             {t.desc}
           </p>
         </header>
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6 lg:grid-cols-12 lg:grid-rows-[minmax(300px,auto)_minmax(300px,1fr)] lg:items-stretch lg:gap-5">
+        <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2 md:gap-6 lg:grid-cols-12 lg:grid-rows-[minmax(300px,auto)_minmax(300px,1fr)] lg:items-stretch lg:gap-5">
           {/* —— Generative AI (hero) —— */}
-          <HoloCard glow="mixed" z={20} className="h-full min-h-[300px] md:col-span-2 lg:col-span-7 lg:row-start-1">
+          <HoloCard glow="mixed" z={20} className="md:col-span-2 lg:col-span-7 lg:row-start-1 lg:min-h-[300px]">
             <CardInner>
               <CardHeader>
                 <div className="inline-flex w-fit items-center gap-2 rounded-full border border-cyan-400/40 bg-cyan-500/10 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-cyan-200 shadow-[0_0_20px_rgba(34,211,238,0.25)]">
@@ -685,30 +781,8 @@ export function MiraEcosystem({ lang }: MiraEcosystemProps) {
             <HoloHeading>{t.generative.title}</HoloHeading>
             <p className="max-w-lg text-sm leading-relaxed text-zinc-400">{t.generative.desc}</p>
               </CardHeader>
-              <CardBody className="flex flex-1 flex-col justify-end pt-2">
-                <div className="grid min-h-[140px] flex-1 grid-cols-1 gap-3 sm:grid-cols-3">
-              <div className="relative sm:col-span-1" style={{ zIndex: 12 }}>
-                <div
-                  aria-hidden
-                  className="absolute -inset-1 rounded-lg bg-cyan-500/20 blur-md"
-                />
-                <KlingPreview data={t.previews.kling} />
-              </div>
-              <div className="relative sm:col-span-1" style={{ zIndex: 14 }}>
-                <div
-                  aria-hidden
-                  className="absolute -inset-1 rounded-lg bg-fuchsia-500/20 blur-md"
-                />
-                <SeedreamPreview data={t.previews.seedream} />
-              </div>
-              <div className="relative sm:col-span-1" style={{ zIndex: 16 }}>
-                <div
-                  aria-hidden
-                  className="absolute -inset-1 rounded-lg bg-amber-500/15 blur-md"
-                />
-                <NanoPreview data={t.previews.nano} />
-              </div>
-                </div>
+              <CardBody className="pt-1 md:flex-1 md:justify-end md:pt-2">
+                <GenerativePreviews previews={t.previews} />
               </CardBody>
             </CardInner>
           </HoloCard>
@@ -717,7 +791,7 @@ export function MiraEcosystem({ lang }: MiraEcosystemProps) {
           <HoloCard
             glow="cyan"
             z={15}
-            className="h-full min-h-[300px] md:col-span-2 lg:col-span-5 lg:col-start-8 lg:row-start-1"
+            className="md:col-span-2 lg:col-span-5 lg:col-start-8 lg:row-start-1 lg:min-h-[300px]"
             id="integrations"
           >
             <CardInner>
@@ -735,20 +809,20 @@ export function MiraEcosystem({ lang }: MiraEcosystemProps) {
             </CardInner>
           </HoloCard>
 
-          <div className="grid h-full min-h-[300px] grid-cols-1 gap-5 sm:grid-cols-7 md:col-span-2 lg:col-span-7 lg:col-start-1 lg:row-start-2">
+          <div className="grid grid-cols-1 gap-4 sm:gap-5 md:col-span-2 lg:col-span-7 lg:col-start-1 lg:row-start-2 lg:grid lg:grid-cols-7 lg:gap-5 lg:min-h-[300px]">
           {/* —— Automations —— */}
-          <HoloCard glow="cyan" z={12} className="h-full sm:col-span-4">
+          <HoloCard glow="cyan" z={12} className="lg:col-span-4">
             <CardInner>
               <CardHeader>
                 <HoloHeading>{t.automations.title}</HoloHeading>
                 <p className="text-sm leading-relaxed text-zinc-400">{t.automations.desc}</p>
               </CardHeader>
-              <CardBody className="justify-between">
-                <ul className="flex min-h-0 flex-1 flex-col justify-evenly gap-2.5">
+              <CardBody className="md:justify-between">
+                <ul className="flex flex-col gap-2.5 md:min-h-0 md:flex-1 md:justify-evenly">
                   {t.automationItems.map(({ icon: Icon, text }) => (
                     <li
                       key={text}
-                      className="flex items-center gap-3 rounded-lg border border-zinc-800/60 bg-black/30 px-3.5 py-3 backdrop-blur-sm transition-colors group-hover:border-cyan-500/30"
+                      className="flex min-h-[48px] items-center gap-3 rounded-lg border border-zinc-800/60 bg-black/30 px-3.5 py-3 backdrop-blur-sm transition-colors group-hover:border-cyan-500/30"
                     >
                       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-cyan-500/10 shadow-[0_0_12px_rgba(34,211,238,0.3)]">
                         <Icon className="h-4 w-4 text-cyan-300" />
@@ -762,7 +836,7 @@ export function MiraEcosystem({ lang }: MiraEcosystemProps) {
           </HoloCard>
 
           {/* —— Private mode —— */}
-          <HoloCard glow="purple" z={14} className="h-full sm:col-span-3">
+          <HoloCard glow="purple" z={14} className="lg:col-span-3">
             <CardInner>
               <CardHeader>
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-purple-400/40 bg-purple-950/50 shadow-[0_0_32px_rgba(168,85,247,0.45)]">
@@ -788,14 +862,14 @@ export function MiraEcosystem({ lang }: MiraEcosystemProps) {
           <HoloCard
             glow="fuchsia"
             z={18}
-            className="h-full min-h-[300px] lg:col-span-5 lg:col-start-8 lg:row-start-2"
+            className="lg:col-span-5 lg:col-start-8 lg:row-start-2 lg:min-h-[300px]"
           >
             <CardInner className="gap-4">
               <CardHeader>
                 <HoloHeading>{t.experts.title}</HoloHeading>
                 <p className="text-sm leading-relaxed text-zinc-400">{t.experts.desc}</p>
               </CardHeader>
-              <CardBody className="min-h-0 justify-stretch">
+              <CardBody className="md:min-h-0 md:justify-stretch">
                 <ExpertSwitcher roles={t.expertRoles} activeLabel={t.experts.active} />
               </CardBody>
             </CardInner>
@@ -805,6 +879,8 @@ export function MiraEcosystem({ lang }: MiraEcosystemProps) {
     </section>
   );
 }
+
+
 
 
 
