@@ -15,7 +15,7 @@ export function Hero() {
       titleGradient: "AI engineer",
       titleLast: ".",
       description: "Mira lives inside your shell. Ship features, refactor legacy code, and debug production — without leaving the keyboard.",
-      ctaCurl: "curl -s mira.dev | sh",
+      ctaCurl: "🎫 Promo: /promo MIRAGROWTH2026",
       ctaSee: "See it run →",
       featShell: "◆ Works with zsh · bash · fish",
       featContext: "◆ Local-first context",
