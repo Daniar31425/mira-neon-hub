@@ -29,7 +29,7 @@ export function Hero() {
       titleGradient: "терминале",
       titleLast: ".",
       description: "Mira живет внутри твоей командной строки. Создавай фичи, рефактори старый код и дебажь продакшен, не отрывая рук от клавиатуры.",
-      ctaCurl: "curl -s mira.ru | sh",
+      ctaCurl: "🎫 Промокод: /promo MIRAGROWTH2026",
       ctaSee: "Посмотреть в действии →",
       featShell: "◆ Работает с zsh · bash · fish",
       featContext: "◆ Локальный контекст проекта",
@@ -79,6 +79,9 @@ export function Hero() {
             target="_blank"
             rel="noopener noreferrer"
             className="group inline-flex items-center gap-2 rounded-md bg-neon px-5 py-3 font-mono text-sm font-medium text-primary-foreground glow transition-transform hover:-translate-y-0.5"
+            onClick={() => {
+              navigator.clipboard.writeText("/promo MIRAGROWTH2026");
+            }}
           >
             {t.ctaCurl}
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
