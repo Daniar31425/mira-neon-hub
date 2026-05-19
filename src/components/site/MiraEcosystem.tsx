@@ -254,6 +254,40 @@ const GLOW_DROP: Record<GlowVariant, string> = {
   mixed: "drop-shadow-[0_0_32px_rgba(34,211,238,0.3)] group-hover:drop-shadow-[0_0_48px_rgba(232,121,249,0.45)]",
 };
 
+function CardInner({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={`flex h-full min-h-0 flex-col justify-between gap-5 ${className}`}>
+      {children}
+    </div>
+  );
+}
+
+function CardHeader({ children }: { children: React.ReactNode }) {
+  return <div className="shrink-0 space-y-2">{children}</div>;
+}
+
+function CardBody({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={`flex min-h-0 flex-1 flex-col ${className}`}>{children}</div>
+  );
+}
+
+function CardFooter({ children }: { children: React.ReactNode }) {
+  return <div className="mt-auto shrink-0">{children}</div>;
+}
+
 function HoloCard({
   children,
   className = "",
@@ -267,7 +301,7 @@ function HoloCard({
 }) {
   return (
     <article
-      className={`group holo-card relative ${GLOW_DROP[glow]} ${className}`}
+      className={`group holo-card relative flex h-full min-h-0 flex-col ${GLOW_DROP[glow]} ${className}`}
       style={{ zIndex: z }}
     >
       {/* Depth layer — back plate */}
@@ -284,10 +318,10 @@ function HoloCard({
 
       {/* Gradient border shell */}
       <div
-        className={`relative rounded-2xl bg-gradient-to-br p-[1px] ${GLOW_BORDER[glow]} transition-all duration-500 group-hover:p-[1.5px]`}
+        className={`relative flex h-full min-h-0 flex-1 flex-col rounded-2xl bg-gradient-to-br p-[1px] ${GLOW_BORDER[glow]} transition-all duration-500 group-hover:p-[1.5px]`}
         style={{ zIndex: 2 }}
       >
-        <div className="relative overflow-hidden rounded-[15px] bg-black/45 backdrop-blur-2xl">
+        <div className="relative flex h-full min-h-0 flex-1 flex-col overflow-hidden rounded-[15px] bg-black/45 backdrop-blur-2xl">
           {/* Inner glass stack */}
           <div
             aria-hidden
@@ -301,7 +335,9 @@ function HoloCard({
             aria-hidden
             className="pointer-events-none absolute -bottom-10 -left-10 h-36 w-36 rounded-full bg-fuchsia-500/12 blur-3xl transition-opacity duration-500 group-hover:opacity-100 opacity-50"
           />
-          <div className="relative z-10 p-5 sm:p-6">{children}</div>
+          <div className="relative z-10 flex h-full min-h-0 flex-1 flex-col p-5 sm:p-6">
+            {children}
+          </div>
         </div>
       </div>
     </article>
@@ -394,7 +430,7 @@ function IntegrationsFlow({
   };
 
   return (
-    <div className="relative mt-6">
+    <div className="relative mt-auto flex flex-1 flex-col justify-end pt-4">
       <svg
         className="pointer-events-none absolute left-[12%] right-[12%] top-1/2 z-0 h-8 -translate-y-1/2 w-[76%] overflow-visible"
         viewBox="0 0 300 20"
@@ -450,13 +486,13 @@ function ExpertSwitcher({
   const active = roles.find((r) => r.id === activeId) ?? roles[0];
 
   return (
-    <div className="mt-5">
-      <div className="mb-3 flex items-center justify-between font-mono text-[10px] uppercase tracking-wider text-zinc-500">
+    <div className="flex min-h-0 flex-1 flex-col gap-4">
+      <div className="flex shrink-0 items-center justify-between font-mono text-[10px] uppercase tracking-wider text-zinc-500">
         <span>{activeLabel}</span>
         <span className="text-fuchsia-300">{active?.label}</span>
       </div>
-      <div className="relative space-y-2">
-        {roles.map((role, index) => {
+      <div className="flex min-h-0 flex-1 flex-col justify-evenly gap-2.5">
+        {roles.map((role) => {
           const isActive = role.id === activeId;
           const Icon = role.icon;
           return (
@@ -465,12 +501,11 @@ function ExpertSwitcher({
               type="button"
               onClick={() => setActiveId(role.id)}
               className={[
-                "relative flex w-full items-center gap-3 rounded-xl border px-3 py-2.5 text-left backdrop-blur-xl transition-all duration-300",
+                "relative flex w-full items-center gap-3 rounded-xl border px-3.5 py-3 text-left backdrop-blur-xl transition-all duration-300",
                 isActive
-                  ? `z-20 scale-[1.02] border-fuchsia-400/50 bg-gradient-to-r ${role.accent} shadow-[0_0_24px_rgba(232,121,249,0.2)]`
-                  : "z-10 border-zinc-800/80 bg-black/30 opacity-75 hover:opacity-100 hover:border-zinc-600",
+                  ? `z-20 border-fuchsia-400/50 bg-gradient-to-r ${role.accent} shadow-[0_0_24px_rgba(232,121,249,0.2)]`
+                  : "z-10 border-zinc-800/80 bg-black/30 opacity-80 hover:border-zinc-600 hover:opacity-100",
               ].join(" ")}
-              style={{ marginLeft: isActive ? 0 : index * 4 }}
             >
               <span
                 className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-black/50 ${role.iconGlow}`}
@@ -518,17 +553,20 @@ export function MiraEcosystem({ lang }: MiraEcosystemProps) {
           </p>
         </header>
 
-        <div className="grid auto-rows-auto grid-cols-1 gap-5 md:grid-cols-2 md:gap-6 lg:grid-cols-12 lg:gap-5">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6 lg:grid-cols-12 lg:grid-rows-[minmax(300px,auto)_minmax(300px,1fr)] lg:items-stretch lg:gap-5">
           {/* —— Generative AI (hero) —— */}
-          <HoloCard glow="mixed" z={20} className="md:col-span-2 lg:col-span-7 lg:row-span-2">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-400/40 bg-cyan-500/10 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-cyan-200 shadow-[0_0_20px_rgba(34,211,238,0.25)]">
+          <HoloCard glow="mixed" z={20} className="h-full min-h-[300px] md:col-span-2 lg:col-span-7 lg:row-start-1">
+            <CardInner>
+              <CardHeader>
+                <div className="inline-flex w-fit items-center gap-2 rounded-full border border-cyan-400/40 bg-cyan-500/10 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-cyan-200 shadow-[0_0_20px_rgba(34,211,238,0.25)]">
               <Zap className="h-3 w-3" />
               {t.flagship}
             </div>
             <HoloHeading>{t.generative.title}</HoloHeading>
-            <p className="mt-2 max-w-lg text-sm text-zinc-400">{t.generative.desc}</p>
-
-            <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <p className="max-w-lg text-sm leading-relaxed text-zinc-400">{t.generative.desc}</p>
+              </CardHeader>
+              <CardBody className="flex flex-1 flex-col justify-end pt-2">
+                <div className="grid min-h-[140px] flex-1 grid-cols-1 gap-3 sm:grid-cols-3">
               <div className="relative sm:col-span-1" style={{ zIndex: 12 }}>
                 <div
                   aria-hidden
@@ -550,65 +588,99 @@ export function MiraEcosystem({ lang }: MiraEcosystemProps) {
                 />
                 <NanoPreview data={t.previews.nano} />
               </div>
-            </div>
+                </div>
+              </CardBody>
+            </CardInner>
           </HoloCard>
 
           {/* —— Integrations —— */}
-          <HoloCard glow="cyan" z={15} className="md:col-span-2 lg:col-span-5">
-            <HoloHeading>{t.integrations.title}</HoloHeading>
-            <p className="mt-2 text-sm text-zinc-400">{t.integrations.desc}</p>
-            <IntegrationsFlow items={t.integrationsList} />
+          <HoloCard
+            glow="cyan"
+            z={15}
+            className="h-full min-h-[300px] md:col-span-2 lg:col-span-5 lg:col-start-8 lg:row-start-1"
+          >
+            <CardInner>
+              <CardHeader>
+                <HoloHeading>{t.integrations.title}</HoloHeading>
+                <p className="text-sm leading-relaxed text-zinc-400">{t.integrations.desc}</p>
+              </CardHeader>
+              <CardBody className="justify-end">
+                <IntegrationsFlow items={t.integrationsList} />
+              </CardBody>
+            </CardInner>
           </HoloCard>
 
-          {/* —— Experts —— */}
-          <HoloCard glow="fuchsia" z={18} className="lg:col-span-5 lg:row-span-2">
-            <HoloHeading>{t.experts.title}</HoloHeading>
-            <p className="mt-2 text-sm text-zinc-400">{t.experts.desc}</p>
-            <ExpertSwitcher roles={t.expertRoles} activeLabel={t.experts.active} />
-          </HoloCard>
-
+          <div className="grid h-full min-h-[300px] grid-cols-1 gap-5 sm:grid-cols-7 md:col-span-2 lg:col-span-7 lg:col-start-1 lg:row-start-2">
           {/* —— Automations —— */}
-          <HoloCard glow="cyan" z={12} className="lg:col-span-4">
-            <HoloHeading>{t.automations.title}</HoloHeading>
-            <p className="mt-2 text-sm text-zinc-400">{t.automations.desc}</p>
-            <ul className="mt-5 space-y-3">
-              {t.automationItems.map(({ icon: Icon, text }) => (
-                <li
-                  key={text}
-                  className="flex items-center gap-3 rounded-lg border border-zinc-800/60 bg-black/30 px-3 py-2 backdrop-blur-sm transition-colors group-hover:border-cyan-500/30"
-                >
-                  <span className="flex h-8 w-8 items-center justify-center rounded-md bg-cyan-500/10 shadow-[0_0_12px_rgba(34,211,238,0.3)]">
-                    <Icon className="h-4 w-4 text-cyan-300" />
-                  </span>
-                  <span className="text-sm text-zinc-300">{text}</span>
-                </li>
-              ))}
-            </ul>
+          <HoloCard glow="cyan" z={12} className="h-full sm:col-span-4">
+            <CardInner>
+              <CardHeader>
+                <HoloHeading>{t.automations.title}</HoloHeading>
+                <p className="text-sm leading-relaxed text-zinc-400">{t.automations.desc}</p>
+              </CardHeader>
+              <CardBody className="justify-between">
+                <ul className="flex min-h-0 flex-1 flex-col justify-evenly gap-2.5">
+                  {t.automationItems.map(({ icon: Icon, text }) => (
+                    <li
+                      key={text}
+                      className="flex items-center gap-3 rounded-lg border border-zinc-800/60 bg-black/30 px-3.5 py-3 backdrop-blur-sm transition-colors group-hover:border-cyan-500/30"
+                    >
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-cyan-500/10 shadow-[0_0_12px_rgba(34,211,238,0.3)]">
+                        <Icon className="h-4 w-4 text-cyan-300" />
+                      </span>
+                      <span className="text-sm leading-snug text-zinc-300">{text}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardBody>
+            </CardInner>
           </HoloCard>
 
           {/* —— Private mode —— */}
-          <HoloCard glow="purple" z={14} className="lg:col-span-3">
-            <div className="flex h-full flex-col justify-between gap-5">
-              <div>
-                <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-purple-400/40 bg-purple-950/50 shadow-[0_0_32px_rgba(168,85,247,0.45)]">
+          <HoloCard glow="purple" z={14} className="h-full sm:col-span-3">
+            <CardInner>
+              <CardHeader>
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-purple-400/40 bg-purple-950/50 shadow-[0_0_32px_rgba(168,85,247,0.45)]">
                   <Lock className="h-7 w-7 text-purple-200" />
                 </div>
                 <HoloHeading>{t.private.title}</HoloHeading>
-                <p className="mt-2 text-sm leading-relaxed text-zinc-400">{t.private.desc}</p>
-              </div>
-              <div className="space-y-2">
-                <span className="inline-flex items-center gap-2 rounded-full border border-fuchsia-500/40 bg-fuchsia-950/40 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider text-fuchsia-200 shadow-[0_0_20px_rgba(232,121,249,0.25)]">
-                  <Shield className="h-3.5 w-3.5" />
-                  {t.private.badge}
-                </span>
-                <p className="font-mono text-[10px] text-purple-300/80">● {t.private.status}</p>
-              </div>
-            </div>
+                <p className="text-sm leading-relaxed text-zinc-400">{t.private.desc}</p>
+              </CardHeader>
+              <CardFooter>
+                <div className="space-y-2.5">
+                  <span className="inline-flex items-center gap-2 rounded-full border border-fuchsia-500/40 bg-fuchsia-950/40 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider text-fuchsia-200 shadow-[0_0_20px_rgba(232,121,249,0.25)]">
+                    <Shield className="h-3.5 w-3.5" />
+                    {t.private.badge}
+                  </span>
+                  <p className="font-mono text-[10px] text-purple-300/80">● {t.private.status}</p>
+                </div>
+              </CardFooter>
+            </CardInner>
+          </HoloCard>
+          </div>
+
+          {/* —— Experts —— */}
+          <HoloCard
+            glow="fuchsia"
+            z={18}
+            className="h-full min-h-[300px] lg:col-span-5 lg:col-start-8 lg:row-start-2"
+          >
+            <CardInner className="gap-4">
+              <CardHeader>
+                <HoloHeading>{t.experts.title}</HoloHeading>
+                <p className="text-sm leading-relaxed text-zinc-400">{t.experts.desc}</p>
+              </CardHeader>
+              <CardBody className="min-h-0 justify-stretch">
+                <ExpertSwitcher roles={t.expertRoles} activeLabel={t.experts.active} />
+              </CardBody>
+            </CardInner>
           </HoloCard>
         </div>
       </div>
     </section>
   );
 }
+
+
 
 
