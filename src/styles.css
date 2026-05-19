@@ -152,4 +152,94 @@
                 0 0 28px color-mix(in oklab, var(--neon) 40%, transparent);
     cursor: grab;
   }
+
+  @keyframes holo-gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  @keyframes holo-title-pulse {
+    0%, 100% { filter: drop-shadow(0 0 12px rgba(34, 211, 238, 0.45)) drop-shadow(0 0 24px rgba(232, 121, 249, 0.25)); }
+    50% { filter: drop-shadow(0 0 20px rgba(34, 211, 238, 0.7)) drop-shadow(0 0 36px rgba(232, 121, 249, 0.45)); }
+  }
+  @keyframes holo-glitch {
+    0%, 90%, 100% { transform: translate(0); opacity: 1; }
+    91% { transform: translate(-2px, 1px); opacity: 0.92; }
+    92% { transform: translate(2px, -1px); opacity: 1; }
+    93% { transform: translate(-1px, 0); }
+  }
+  @keyframes holo-scan-sweep {
+    0% { transform: translateY(-100%); opacity: 0; }
+    15% { opacity: 0.6; }
+    100% { transform: translateY(220%); opacity: 0; }
+  }
+  @keyframes holo-flow-dash {
+    to { stroke-dashoffset: -24; }
+  }
+  @keyframes holo-shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  .holo-title-gradient {
+    background-image: linear-gradient(
+      90deg,
+      #22d3ee 0%,
+      #e879f9 35%,
+      #fff 50%,
+      #a78bfa 65%,
+      #22d3ee 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: holo-gradient-shift 5s ease infinite, holo-title-pulse 3s ease-in-out infinite;
+  }
+  .holo-title-glitch {
+    animation: holo-glitch 8s steps(1) infinite;
+  }
+  .holo-heading-gradient {
+    background-image: linear-gradient(90deg, #67e8f9, #f0abfc, #c4b5fd);
+    background-size: 180% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: holo-gradient-shift 6s ease infinite;
+  }
+
+  .holo-card {
+    isolation: isolate;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), filter 0.4s ease;
+  }
+  .holo-card:hover {
+    transform: scale(1.015);
+  }
+  .holo-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(34, 211, 238, 0.08) 48%,
+      rgba(232, 121, 249, 0.12) 52%,
+      transparent 100%
+    );
+    height: 40%;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 30;
+  }
+  .holo-card:hover::after {
+    animation: holo-scan-sweep 1.2s ease-out;
+    opacity: 1;
+  }
+  .holo-flow-line {
+    stroke-dasharray: 6 6;
+    animation: holo-flow-dash 1.5s linear infinite;
+  }
+  .holo-shimmer-bar {
+    animation: holo-shimmer 2.5s ease-in-out infinite;
+  }
 }

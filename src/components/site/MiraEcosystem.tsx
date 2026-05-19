@@ -1,4 +1,6 @@
+import { useState } from "react";
 import type { LangType } from "@/lib/app-context";
+import type { LucideIcon } from "lucide-react";
 import {
   Activity,
   CalendarClock,
@@ -7,59 +9,122 @@ import {
   Dumbbell,
   FileText,
   HeartPulse,
-  Image,
   Lock,
   Mail,
   MapPin,
   Palette,
+  Play,
   Shield,
   Shirt,
   Sparkles,
-  Video,
   Wallet,
-  Wand2,
   BookOpen,
+  Zap,
 } from "lucide-react";
 
 export type MiraEcosystemProps = {
   lang: LangType;
 };
 
+type GlowVariant = "cyan" | "fuchsia" | "purple" | "mixed";
+
+type ExpertRole = {
+  id: string;
+  icon: LucideIcon;
+  label: string;
+  brief: string;
+  accent: string;
+  iconGlow: string;
+};
+
 const T = {
   en: {
-    badge: "// mira ecosystem",
+    badge: "// mira ecosystem · holographic layer",
     title: "One assistant. Every workflow.",
-    desc: "Generative media, deep integrations, expert personas, daily automations, and privacy — unified under a single neon hub.",
-    flagship: "flagship",
+    desc: "Generative media, deep integrations, expert personas, daily automations, and privacy — unified inside a multi-layer neon command deck.",
+    flagship: "flagship module",
     generative: {
       title: "Generative AI Engine",
-      desc: "Create studio-grade photos, cinematic videos, and polished copy without leaving the chat. Mira routes the right model for each asset.",
-      tags: ["Photos", "Videos", "Text"],
+      desc: "Route each request to the right model stack. Photos, video, and copy render in isolated preview windows — without leaving Mira.",
+    },
+    previews: {
+      kling: {
+        title: "Kling Video AI",
+        status: "Synthesizing motion…",
+        meta: "4K · 24fps · scene_07",
+      },
+      seedream: {
+        title: "Seedream Photo Render",
+        status: "Diffusion pass 3/4",
+        meta: "RAW · 4096²",
+      },
+      nano: {
+        title: "Nano Banana Pro",
+        status: "Streaming tokens",
+        sample: "Neon skyline copy — draft v2 ready for export.",
+      },
     },
     integrations: {
       title: "Deep App Integrations",
-      desc: "Connect wallets, design tools, docs, and cloud — Mira acts across your stack, not beside it.",
+      desc: "Wallet, design, docs, and cloud services orbit Mira through encrypted sync channels.",
     },
     experts: {
       title: "Specialized AI Experts",
-      desc: "Switch personas in one message. Each expert ships domain-tuned answers.",
+      desc: "Profile switcher — pick a persona, get domain-tuned reasoning instantly.",
+      active: "active profile",
     },
     automations: {
       title: "Daily Automations",
-      desc: "Hands-free routines that run while you focus on what matters.",
+      desc: "Cron-style routines that fire while you stay in flow state.",
     },
     private: {
       title: "Private Mode",
-      desc: "Your data stays yours. Cocoon technology encrypts sessions end-to-end so sensitive workflows never leak.",
+      desc: "Sessions sealed by Cocoon — end-to-end encryption for sensitive workflows.",
       badge: "Powered by Cocoon",
+      status: "shield active",
     },
     expertRoles: [
-      { icon: MapPin, label: "City Guide" },
-      { icon: HeartPulse, label: "Health Assistant" },
-      { icon: Dumbbell, label: "Fitness Trainer" },
-      { icon: BookOpen, label: "Storyteller" },
-      { icon: Shirt, label: "Stylist" },
-    ],
+      {
+        id: "guide",
+        icon: MapPin,
+        label: "City Guide",
+        brief: "Routes, venues & local context",
+        accent: "from-cyan-500/25 to-cyan-950/40",
+        iconGlow: "shadow-[0_0_16px_rgba(34,211,238,0.55)] text-cyan-300",
+      },
+      {
+        id: "health",
+        icon: HeartPulse,
+        label: "Health Assistant",
+        brief: "Wellness plans & habit tracking",
+        accent: "from-rose-500/25 to-rose-950/40",
+        iconGlow: "shadow-[0_0_16px_rgba(251,113,133,0.55)] text-rose-300",
+      },
+      {
+        id: "fitness",
+        icon: Dumbbell,
+        label: "Fitness Trainer",
+        brief: "Workouts & recovery macros",
+        accent: "from-amber-500/25 to-amber-950/40",
+        iconGlow: "shadow-[0_0_16px_rgba(251,191,36,0.55)] text-amber-300",
+      },
+      {
+        id: "story",
+        icon: BookOpen,
+        label: "Storyteller",
+        brief: "Narratives & script beats",
+        accent: "from-violet-500/25 to-violet-950/40",
+        iconGlow: "shadow-[0_0_16px_rgba(167,139,250,0.55)] text-violet-300",
+      },
+      {
+        id: "style",
+        icon: Shirt,
+        label: "Stylist",
+        brief: "Outfits, palettes & mood boards",
+        accent: "from-fuchsia-500/25 to-fuchsia-950/40",
+        iconGlow: "shadow-[0_0_16px_rgba(232,121,249,0.55)] text-fuchsia-300",
+      },
+    ] as ExpertRole[],
     automationItems: [
       { icon: CalendarClock, text: "Schedule 15:00 meetings" },
       { icon: Mail, text: "Check & triage emails" },
@@ -67,46 +132,99 @@ const T = {
       { icon: Clapperboard, text: "Take movie notes" },
     ],
     integrationsList: [
-      { icon: Wallet, name: "TON Wallet", color: "from-cyan-400/20 to-cyan-500/5" },
-      { icon: Palette, name: "Canva", color: "from-fuchsia-400/20 to-fuchsia-500/5" },
-      { icon: FileText, name: "Notion", color: "from-zinc-400/20 to-zinc-500/5" },
-      { icon: Chrome, name: "Google", color: "from-emerald-400/20 to-emerald-500/5" },
+      { icon: Wallet, name: "TON", full: "TON Wallet", glow: "cyan" as const },
+      { icon: Palette, name: "Canva", full: "Canva", glow: "fuchsia" as const },
+      { icon: FileText, name: "Notion", full: "Notion", glow: "purple" as const },
+      { icon: Chrome, name: "Google", full: "Google", glow: "emerald" as const },
     ],
   },
   ru: {
-    badge: "// экосистема mira",
+    badge: "// экосистема mira · голографический слой",
     title: "Один ассистент. Любой сценарий.",
-    desc: "Генерация медиа, глубокие интеграции, экспертные роли, ежедневные автоматизации и приватность — в одном неоновом хабе.",
-    flagship: "флагман",
+    desc: "Генерация медиа, интеграции, экспертные роли, автоматизации и приватность — в многослойной неоновой командной панели.",
+    flagship: "флагманский модуль",
     generative: {
       title: "Генеративный AI-движок",
-      desc: "Создавай фото студийного качества, видео и тексты прямо в чате. Mira подбирает модель под каждый формат.",
-      tags: ["Фото", "Видео", "Текст"],
+      desc: "Каждый запрос уходит в нужный стек моделей. Фото, видео и текст рендерятся в изолированных окнах — без выхода из Mira.",
+    },
+    previews: {
+      kling: {
+        title: "Kling Video AI",
+        status: "Синтез движения…",
+        meta: "4K · 24fps · сцена_07",
+      },
+      seedream: {
+        title: "Seedream Photo Render",
+        status: "Диффузия 3/4",
+        meta: "RAW · 4096²",
+      },
+      nano: {
+        title: "Nano Banana Pro",
+        status: "Поток токенов",
+        sample: "Неоновый силуэт города — черновик v2 готов к экспорту.",
+      },
     },
     integrations: {
       title: "Глубокие интеграции",
-      desc: "Кошельки, дизайн, документы и облако — Mira работает внутри вашего стека, а не рядом с ним.",
+      desc: "Кошелёк, дизайн, документы и облако синхронизируются с Mira по зашифрованным каналам.",
     },
     experts: {
       title: "Специализированные эксперты",
-      desc: "Меняй роль одним сообщением. Каждый эксперт заточен под свою область.",
+      desc: "Переключатель профилей — выбери роль, получи ответы под домен.",
+      active: "активный профиль",
     },
     automations: {
       title: "Ежедневные автоматизации",
-      desc: "Рутины на автопилоте, пока вы занимаетесь главным.",
+      desc: "Рутины по расписанию, пока вы остаётесь в потоке.",
     },
     private: {
       title: "Приватный режим",
-      desc: "Ваши данные остаются вашими. Технология Cocoon шифрует сессии end-to-end — чувствительные сценарии не утекают.",
+      desc: "Сессии под защитой Cocoon — сквозное шифрование для чувствительных сценариев.",
       badge: "На базе Cocoon",
+      status: "щит активен",
     },
     expertRoles: [
-      { icon: MapPin, label: "Гид по городу" },
-      { icon: HeartPulse, label: "Помощник по здоровью" },
-      { icon: Dumbbell, label: "Фитнес-тренер" },
-      { icon: BookOpen, label: "Сторителлер" },
-      { icon: Shirt, label: "Стилист" },
-    ],
+      {
+        id: "guide",
+        icon: MapPin,
+        label: "Гид по городу",
+        brief: "Маршруты, места и локальный контекст",
+        accent: "from-cyan-500/25 to-cyan-950/40",
+        iconGlow: "shadow-[0_0_16px_rgba(34,211,238,0.55)] text-cyan-300",
+      },
+      {
+        id: "health",
+        icon: HeartPulse,
+        label: "Помощник по здоровью",
+        brief: "Планы wellness и привычки",
+        accent: "from-rose-500/25 to-rose-950/40",
+        iconGlow: "shadow-[0_0_16px_rgba(251,113,133,0.55)] text-rose-300",
+      },
+      {
+        id: "fitness",
+        icon: Dumbbell,
+        label: "Фитнес-тренер",
+        brief: "Тренировки и макросы восстановления",
+        accent: "from-amber-500/25 to-amber-950/40",
+        iconGlow: "shadow-[0_0_16px_rgba(251,191,36,0.55)] text-amber-300",
+      },
+      {
+        id: "story",
+        icon: BookOpen,
+        label: "Сторителлер",
+        brief: "Сюжеты и структура сценария",
+        accent: "from-violet-500/25 to-violet-950/40",
+        iconGlow: "shadow-[0_0_16px_rgba(167,139,250,0.55)] text-violet-300",
+      },
+      {
+        id: "style",
+        icon: Shirt,
+        label: "Стилист",
+        brief: "Образы, палитры и mood board",
+        accent: "from-fuchsia-500/25 to-fuchsia-950/40",
+        iconGlow: "shadow-[0_0_16px_rgba(232,121,249,0.55)] text-fuchsia-300",
+      },
+    ] as ExpertRole[],
     automationItems: [
       { icon: CalendarClock, text: "Встречи в 15:00 по расписанию" },
       { icon: Mail, text: "Проверка и разбор почты" },
@@ -114,65 +232,263 @@ const T = {
       { icon: Clapperboard, text: "Заметки по фильмам" },
     ],
     integrationsList: [
-      { icon: Wallet, name: "TON Wallet", color: "from-cyan-400/20 to-cyan-500/5" },
-      { icon: Palette, name: "Canva", color: "from-fuchsia-400/20 to-fuchsia-500/5" },
-      { icon: FileText, name: "Notion", color: "from-zinc-400/20 to-zinc-500/5" },
-      { icon: Chrome, name: "Google", color: "from-emerald-400/20 to-emerald-500/5" },
+      { icon: Wallet, name: "TON", full: "TON Wallet", glow: "cyan" as const },
+      { icon: Palette, name: "Canva", full: "Canva", glow: "fuchsia" as const },
+      { icon: FileText, name: "Notion", full: "Notion", glow: "purple" as const },
+      { icon: Chrome, name: "Google", full: "Google", glow: "emerald" as const },
     ],
   },
-} as const;
+};
 
-function BentoCard({
-  className = "",
+const GLOW_BORDER: Record<GlowVariant, string> = {
+  cyan: "from-cyan-400/70 via-cyan-500/20 to-purple-500/40",
+  fuchsia: "from-fuchsia-400/70 via-purple-500/30 to-cyan-500/30",
+  purple: "from-purple-400/60 via-fuchsia-500/25 to-cyan-400/35",
+  mixed: "from-cyan-400/80 via-fuchsia-500/50 to-purple-600/60",
+};
+
+const GLOW_DROP: Record<GlowVariant, string> = {
+  cyan: "drop-shadow-[0_0_28px_rgba(34,211,238,0.35)] group-hover:drop-shadow-[0_0_42px_rgba(34,211,238,0.55)]",
+  fuchsia: "drop-shadow-[0_0_28px_rgba(232,121,249,0.35)] group-hover:drop-shadow-[0_0_42px_rgba(232,121,249,0.55)]",
+  purple: "drop-shadow-[0_0_28px_rgba(168,85,247,0.35)] group-hover:drop-shadow-[0_0_42px_rgba(168,85,247,0.55)]",
+  mixed: "drop-shadow-[0_0_32px_rgba(34,211,238,0.3)] group-hover:drop-shadow-[0_0_48px_rgba(232,121,249,0.45)]",
+};
+
+function HoloCard({
   children,
+  className = "",
   glow = "cyan",
+  z = 10,
 }: {
-  className?: string;
   children: React.ReactNode;
-  glow?: "cyan" | "fuchsia" | "mixed";
+  className?: string;
+  glow?: GlowVariant;
+  z?: number;
 }) {
-  const hoverShadow =
-    glow === "fuchsia"
-      ? "hover:shadow-[0_0_40px_rgba(232,121,249,0.15),inset_0_1px_0_rgba(232,121,249,0.2)]"
-      : glow === "mixed"
-        ? "hover:shadow-[0_0_35px_rgba(34,211,238,0.12),0_0_35px_rgba(232,121,249,0.12)]"
-        : "hover:shadow-[0_0_40px_rgba(34,211,238,0.15),inset_0_1px_0_rgba(34,211,238,0.2)]";
-
-  const borderHover =
-    glow === "fuchsia"
-      ? "hover:border-fuchsia-500/40"
-      : glow === "mixed"
-        ? "hover:border-cyan-500/30"
-        : "hover:border-cyan-500/40";
-
   return (
     <article
-      className={[
-        "group relative overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 p-5 backdrop-blur-xl transition-all duration-300",
-        "hover:scale-[1.02]",
-        borderHover,
-        hoverShadow,
-        className,
-      ].join(" ")}
+      className={`group holo-card relative ${GLOW_DROP[glow]} ${className}`}
+      style={{ zIndex: z }}
     >
+      {/* Depth layer — back plate */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-cyan-500/10 blur-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+        className="absolute inset-0 translate-y-3 scale-[0.98] rounded-2xl bg-black/70 blur-md"
+        style={{ zIndex: 0 }}
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -bottom-8 -left-8 h-28 w-28 rounded-full bg-fuchsia-500/10 blur-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+        className="absolute inset-0 translate-y-1.5 scale-[0.99] rounded-2xl border border-white/5 bg-zinc-950/80"
+        style={{ zIndex: 1 }}
       />
-      <div className="relative z-10">{children}</div>
+
+      {/* Gradient border shell */}
+      <div
+        className={`relative rounded-2xl bg-gradient-to-br p-[1px] ${GLOW_BORDER[glow]} transition-all duration-500 group-hover:p-[1.5px]`}
+        style={{ zIndex: 2 }}
+      >
+        <div className="relative overflow-hidden rounded-[15px] bg-black/45 backdrop-blur-2xl">
+          {/* Inner glass stack */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/[0.07] via-transparent to-fuchsia-500/[0.04]"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-cyan-500/15 blur-3xl transition-opacity duration-500 group-hover:opacity-100 opacity-60"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -bottom-10 -left-10 h-36 w-36 rounded-full bg-fuchsia-500/12 blur-3xl transition-opacity duration-500 group-hover:opacity-100 opacity-50"
+          />
+          <div className="relative z-10 p-5 sm:p-6">{children}</div>
+        </div>
+      </div>
     </article>
   );
 }
 
-function GradientHeading({ children }: { children: React.ReactNode }) {
+function HoloHeading({ children }: { children: React.ReactNode }) {
+  return <h3 className="holo-heading-gradient text-lg font-bold tracking-tight md:text-xl">{children}</h3>;
+}
+
+function KlingPreview({ data }: { data: (typeof T)["en"]["previews"]["kling"] }) {
   return (
-    <h3 className="bg-gradient-to-r from-cyan-300 via-white to-fuchsia-300 bg-clip-text text-lg font-bold tracking-tight text-transparent md:text-xl">
-      {children}
-    </h3>
+    <div className="relative flex h-full min-h-[108px] flex-col overflow-hidden rounded-lg border border-cyan-500/30 bg-black/60 shadow-[0_0_30px_rgba(34,211,238,0.25),inset_0_1px_0_rgba(34,211,238,0.2)]">
+      <div className="flex items-center justify-between border-b border-cyan-500/20 bg-cyan-950/40 px-2 py-1">
+        <span className="font-mono text-[9px] text-cyan-300">{data.title}</span>
+        <span className="flex h-4 w-4 items-center justify-center rounded-full bg-cyan-500/20">
+          <Play className="h-2 w-2 fill-cyan-300 text-cyan-300" />
+        </span>
+      </div>
+      <div className="relative flex-1 p-2">
+        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(34,211,238,0.15)_0%,transparent_50%,rgba(168,85,247,0.2)_100%)]" />
+        <div className="grid h-full grid-cols-4 gap-0.5 opacity-80">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div
+              key={i}
+              className="rounded-sm bg-gradient-to-b from-cyan-400/30 to-purple-600/20"
+              style={{ height: `${30 + (i % 4) * 12}%`, alignSelf: "end" }}
+            />
+          ))}
+        </div>
+        <div className="absolute bottom-1 left-2 right-2">
+          <p className="font-mono text-[8px] text-cyan-200/90">{data.status}</p>
+          <p className="font-mono text-[7px] text-zinc-500">{data.meta}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SeedreamPreview({ data }: { data: (typeof T)["en"]["previews"]["seedream"] }) {
+  return (
+    <div className="relative flex h-full min-h-[108px] flex-col overflow-hidden rounded-lg border border-fuchsia-500/35 bg-black/60 shadow-[0_0_32px_rgba(232,121,249,0.28),inset_0_0_40px_rgba(232,121,249,0.08)]">
+      <div className="border-b border-fuchsia-500/25 bg-fuchsia-950/30 px-2 py-1 font-mono text-[9px] text-fuchsia-200">
+        {data.title}
+      </div>
+      <div className="relative flex flex-1 items-center justify-center p-2">
+        <div className="absolute inset-2 rounded-md bg-gradient-to-tr from-fuchsia-600/40 via-purple-500/20 to-cyan-400/30 blur-[2px]" />
+        <div className="relative h-14 w-14 rounded-lg border border-fuchsia-400/50 bg-gradient-to-br from-fuchsia-500/30 to-purple-900/50 shadow-[0_0_24px_rgba(232,121,249,0.5)]">
+          <div className="absolute inset-0 overflow-hidden rounded-lg">
+            <div className="holo-shimmer-bar absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+          </div>
+        </div>
+        <div className="absolute bottom-1.5 left-2">
+          <p className="font-mono text-[8px] text-fuchsia-200/90">{data.status}</p>
+          <p className="font-mono text-[7px] text-zinc-500">{data.meta}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function NanoPreview({ data }: { data: (typeof T)["en"]["previews"]["nano"] }) {
+  return (
+    <div className="relative flex h-full min-h-[108px] flex-col overflow-hidden rounded-lg border border-amber-400/30 bg-black/60 shadow-[0_0_28px_rgba(251,191,36,0.2),inset_0_1px_0_rgba(251,191,36,0.15)]">
+      <div className="flex items-center gap-1 border-b border-amber-500/20 bg-amber-950/30 px-2 py-1">
+        <Sparkles className="h-2.5 w-2.5 text-amber-300" />
+        <span className="font-mono text-[9px] text-amber-200">{data.title}</span>
+      </div>
+      <div className="flex flex-1 flex-col justify-between p-2">
+        <p className="font-mono text-[8px] leading-relaxed text-zinc-300">{data.sample}</p>
+        <div className="mt-1 flex items-center gap-1">
+          <span className="h-1 w-1 animate-pulse rounded-full bg-amber-400" />
+          <span className="font-mono text-[7px] text-amber-300/80">{data.status}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function IntegrationsFlow({
+  items,
+}: {
+  items: (typeof T)["en"]["integrationsList"];
+}) {
+  const badgeGlow: Record<string, string> = {
+    cyan: "hover:shadow-[0_0_28px_rgba(34,211,238,0.55)] hover:border-cyan-400/60 hover:scale-110",
+    fuchsia: "hover:shadow-[0_0_28px_rgba(232,121,249,0.55)] hover:border-fuchsia-400/60 hover:scale-110",
+    purple: "hover:shadow-[0_0_28px_rgba(168,85,247,0.55)] hover:border-purple-400/60 hover:scale-110",
+    emerald: "hover:shadow-[0_0_28px_rgba(52,211,153,0.55)] hover:border-emerald-400/60 hover:scale-110",
+  };
+
+  return (
+    <div className="relative mt-6">
+      <svg
+        className="pointer-events-none absolute left-[12%] right-[12%] top-1/2 z-0 h-8 -translate-y-1/2 w-[76%] overflow-visible"
+        viewBox="0 0 300 20"
+        preserveAspectRatio="none"
+        aria-hidden
+      >
+        <defs>
+          <linearGradient id="holo-flow-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="rgba(34,211,238,0.8)" />
+            <stop offset="50%" stopColor="rgba(168,85,247,0.9)" />
+            <stop offset="100%" stopColor="rgba(232,121,249,0.8)" />
+          </linearGradient>
+        </defs>
+        <path
+          d="M 10 10 Q 75 2, 150 10 T 290 10"
+          fill="none"
+          stroke="url(#holo-flow-grad)"
+          strokeWidth="1.5"
+          className="holo-flow-line opacity-60"
+        />
+      </svg>
+      <div className="relative z-10 flex flex-wrap items-center justify-between gap-4 sm:flex-nowrap sm:gap-2">
+        {items.map(({ icon: Icon, name, full, glow }) => (
+          <button
+            key={name}
+            type="button"
+            className={`flex flex-col items-center gap-2 transition-all duration-300 ${badgeGlow[glow]}`}
+          >
+            <span
+              className={`flex h-14 w-14 items-center justify-center rounded-2xl border border-zinc-700/80 bg-zinc-950/80 backdrop-blur-xl`}
+            >
+              <Icon className="h-6 w-6 text-zinc-100" />
+            </span>
+            <span className="font-mono text-[10px] text-zinc-400 sm:text-xs">
+              <span className="text-zinc-200">{name}</span>
+              <span className="hidden sm:inline"> · {full}</span>
+            </span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ExpertSwitcher({
+  roles,
+  activeLabel,
+}: {
+  roles: ExpertRole[];
+  activeLabel: string;
+}) {
+  const [activeId, setActiveId] = useState(roles[0]?.id ?? "guide");
+  const active = roles.find((r) => r.id === activeId) ?? roles[0];
+
+  return (
+    <div className="mt-5">
+      <div className="mb-3 flex items-center justify-between font-mono text-[10px] uppercase tracking-wider text-zinc-500">
+        <span>{activeLabel}</span>
+        <span className="text-fuchsia-300">{active?.label}</span>
+      </div>
+      <div className="relative space-y-2">
+        {roles.map((role, index) => {
+          const isActive = role.id === activeId;
+          const Icon = role.icon;
+          return (
+            <button
+              key={role.id}
+              type="button"
+              onClick={() => setActiveId(role.id)}
+              className={[
+                "relative flex w-full items-center gap-3 rounded-xl border px-3 py-2.5 text-left backdrop-blur-xl transition-all duration-300",
+                isActive
+                  ? `z-20 scale-[1.02] border-fuchsia-400/50 bg-gradient-to-r ${role.accent} shadow-[0_0_24px_rgba(232,121,249,0.2)]`
+                  : "z-10 border-zinc-800/80 bg-black/30 opacity-75 hover:opacity-100 hover:border-zinc-600",
+              ].join(" ")}
+              style={{ marginLeft: isActive ? 0 : index * 4 }}
+            >
+              <span
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-black/50 ${role.iconGlow}`}
+              >
+                <Icon className="h-4 w-4" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="font-mono text-xs font-medium text-zinc-100 sm:text-sm">{role.label}</p>
+                <p className="truncate font-mono text-[10px] text-zinc-500">{role.brief}</p>
+              </div>
+              {isActive && (
+                <span className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-fuchsia-400 shadow-[0_0_8px_#e879f9]" />
+              )}
+            </button>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 
@@ -180,131 +496,119 @@ export function MiraEcosystem({ lang }: MiraEcosystemProps) {
   const t = T[lang];
 
   return (
-    <section id="ecosystem" className="px-6 py-24">
-      <div className="mx-auto max-w-6xl">
-        <header className="mb-12 text-center md:text-left">
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-neon">{t.badge}</p>
-          <h2 className="mt-3 bg-gradient-to-r from-cyan-200 via-white to-fuchsia-200 bg-clip-text text-3xl font-bold tracking-tight text-transparent md:text-4xl">
+    <section id="ecosystem" className="relative overflow-hidden px-6 py-28">
+      {/* Ambient holographic field */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-0 h-[480px] w-[min(100%,900px)] -translate-x-1/2 rounded-full bg-gradient-to-b from-cyan-500/10 via-purple-500/5 to-transparent blur-3xl"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute bottom-0 right-0 h-64 w-64 rounded-full bg-fuchsia-600/10 blur-3xl"
+      />
+
+      <div className="relative mx-auto max-w-6xl" style={{ zIndex: 5 }}>
+        <header className="mb-14 text-center md:text-left">
+          <p className="font-mono text-xs uppercase tracking-[0.25em] text-neon text-glow">{t.badge}</p>
+          <h2 className="holo-title-glitch holo-title-gradient mt-4 text-3xl font-bold tracking-tight md:text-5xl">
             {t.title}
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-muted-foreground md:mx-0">{t.desc}</p>
+          <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-zinc-400 md:mx-0 md:text-base">
+            {t.desc}
+          </p>
         </header>
 
-        <div className="grid auto-rows-[minmax(140px,auto)] grid-cols-1 gap-4 md:grid-cols-2 md:gap-5 lg:grid-cols-4 lg:grid-rows-3">
-          {/* Card 1 — Large highlight */}
-          <BentoCard
-            glow="mixed"
-            className="md:col-span-2 lg:col-span-2 lg:row-span-2 lg:min-h-[320px]"
-          >
-            <div className="flex h-full flex-col justify-between gap-6">
-              <div>
-                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-cyan-300">
-                  <Sparkles className="h-3.5 w-3.5" />
-                  {t.flagship}
-                </div>
-                <GradientHeading>{t.generative.title}</GradientHeading>
-                <p className="mt-3 max-w-md text-sm leading-relaxed text-zinc-400">{t.generative.desc}</p>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                {t.generative.tags.map((tag, i) => {
-                  const icons = [Image, Video, Wand2];
-                  const Icon = icons[i] ?? Sparkles;
-                  return (
-                    <span
-                      key={tag}
-                      className="inline-flex items-center gap-2 rounded-lg border border-zinc-700/80 bg-zinc-900/80 px-3 py-2 font-mono text-xs text-zinc-200 transition-colors group-hover:border-cyan-500/30 group-hover:text-cyan-100"
-                    >
-                      <Icon className="h-4 w-4 text-cyan-400" />
-                      {tag}
-                    </span>
-                  );
-                })}
-              </div>
-
-              <div className="grid grid-cols-3 gap-2">
-                {[Image, Video, Wand2].map((Icon, i) => (
-                  <div
-                    key={i}
-                    className="flex aspect-video items-center justify-center rounded-xl border border-zinc-800 bg-gradient-to-br from-zinc-900 to-zinc-950 transition-all group-hover:border-cyan-500/20"
-                  >
-                    <Icon className="h-8 w-8 text-cyan-400/40 transition-colors group-hover:text-cyan-400/80" />
-                  </div>
-                ))}
-              </div>
+        <div className="grid auto-rows-auto grid-cols-1 gap-5 md:grid-cols-2 md:gap-6 lg:grid-cols-12 lg:gap-5">
+          {/* —— Generative AI (hero) —— */}
+          <HoloCard glow="mixed" z={20} className="md:col-span-2 lg:col-span-7 lg:row-span-2">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-400/40 bg-cyan-500/10 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-cyan-200 shadow-[0_0_20px_rgba(34,211,238,0.25)]">
+              <Zap className="h-3 w-3" />
+              {t.flagship}
             </div>
-          </BentoCard>
+            <HoloHeading>{t.generative.title}</HoloHeading>
+            <p className="mt-2 max-w-lg text-sm text-zinc-400">{t.generative.desc}</p>
 
-          {/* Card 2 — Integrations */}
-          <BentoCard glow="cyan" className="md:col-span-2 lg:col-span-2">
-            <GradientHeading>{t.integrations.title}</GradientHeading>
-            <p className="mt-2 text-sm text-zinc-400">{t.integrations.desc}</p>
-            <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {t.integrationsList.map(({ icon: Icon, name, color }) => (
+            <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <div className="relative sm:col-span-1" style={{ zIndex: 12 }}>
                 <div
-                  key={name}
-                  className={`flex flex-col items-center gap-2 rounded-xl border border-zinc-800 bg-gradient-to-b ${color} p-3 transition-transform group-hover:scale-[1.03]`}
-                >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-700/60 bg-zinc-950/80">
-                    <Icon className="h-5 w-5 text-zinc-200" />
-                  </div>
-                  <span className="font-mono text-[10px] text-zinc-300 sm:text-xs">{name}</span>
-                </div>
-              ))}
+                  aria-hidden
+                  className="absolute -inset-1 rounded-lg bg-cyan-500/20 blur-md"
+                />
+                <KlingPreview data={t.previews.kling} />
+              </div>
+              <div className="relative sm:col-span-1" style={{ zIndex: 14 }}>
+                <div
+                  aria-hidden
+                  className="absolute -inset-1 rounded-lg bg-fuchsia-500/20 blur-md"
+                />
+                <SeedreamPreview data={t.previews.seedream} />
+              </div>
+              <div className="relative sm:col-span-1" style={{ zIndex: 16 }}>
+                <div
+                  aria-hidden
+                  className="absolute -inset-1 rounded-lg bg-amber-500/15 blur-md"
+                />
+                <NanoPreview data={t.previews.nano} />
+              </div>
             </div>
-          </BentoCard>
+          </HoloCard>
 
-          {/* Card 3 — Experts */}
-          <BentoCard glow="fuchsia" className="lg:col-span-1 lg:row-span-2">
-            <GradientHeading>{t.experts.title}</GradientHeading>
+          {/* —— Integrations —— */}
+          <HoloCard glow="cyan" z={15} className="md:col-span-2 lg:col-span-5">
+            <HoloHeading>{t.integrations.title}</HoloHeading>
+            <p className="mt-2 text-sm text-zinc-400">{t.integrations.desc}</p>
+            <IntegrationsFlow items={t.integrationsList} />
+          </HoloCard>
+
+          {/* —— Experts —— */}
+          <HoloCard glow="fuchsia" z={18} className="lg:col-span-5 lg:row-span-2">
+            <HoloHeading>{t.experts.title}</HoloHeading>
             <p className="mt-2 text-sm text-zinc-400">{t.experts.desc}</p>
-            <ul className="mt-5 space-y-2.5">
-              {t.expertRoles.map(({ icon: Icon, label }) => (
-                <li
-                  key={label}
-                  className="flex items-center gap-3 rounded-lg border border-zinc-800/80 bg-zinc-900/50 px-3 py-2.5 transition-colors group-hover:border-fuchsia-500/25 group-hover:bg-zinc-900/80"
-                >
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-fuchsia-500/10 text-fuchsia-300">
-                    <Icon className="h-4 w-4" />
-                  </span>
-                  <span className="font-mono text-xs text-zinc-200 sm:text-sm">{label}</span>
-                </li>
-              ))}
-            </ul>
-          </BentoCard>
+            <ExpertSwitcher roles={t.expertRoles} activeLabel={t.experts.active} />
+          </HoloCard>
 
-          {/* Card 4 — Automations */}
-          <BentoCard glow="cyan" className="lg:col-span-1">
-            <GradientHeading>{t.automations.title}</GradientHeading>
+          {/* —— Automations —— */}
+          <HoloCard glow="cyan" z={12} className="lg:col-span-4">
+            <HoloHeading>{t.automations.title}</HoloHeading>
             <p className="mt-2 text-sm text-zinc-400">{t.automations.desc}</p>
-            <ul className="mt-4 space-y-2">
+            <ul className="mt-5 space-y-3">
               {t.automationItems.map(({ icon: Icon, text }) => (
-                <li key={text} className="flex items-start gap-2.5 text-sm text-zinc-300">
-                  <Icon className="mt-0.5 h-4 w-4 shrink-0 text-cyan-400" />
-                  <span>{text}</span>
+                <li
+                  key={text}
+                  className="flex items-center gap-3 rounded-lg border border-zinc-800/60 bg-black/30 px-3 py-2 backdrop-blur-sm transition-colors group-hover:border-cyan-500/30"
+                >
+                  <span className="flex h-8 w-8 items-center justify-center rounded-md bg-cyan-500/10 shadow-[0_0_12px_rgba(34,211,238,0.3)]">
+                    <Icon className="h-4 w-4 text-cyan-300" />
+                  </span>
+                  <span className="text-sm text-zinc-300">{text}</span>
                 </li>
               ))}
             </ul>
-          </BentoCard>
+          </HoloCard>
 
-          {/* Card 5 — Private mode */}
-          <BentoCard glow="fuchsia" className="lg:col-span-1">
-            <div className="flex h-full flex-col justify-between gap-4">
+          {/* —— Private mode —— */}
+          <HoloCard glow="purple" z={14} className="lg:col-span-3">
+            <div className="flex h-full flex-col justify-between gap-5">
               <div>
-                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl border border-fuchsia-500/30 bg-fuchsia-500/10 shadow-[0_0_24px_rgba(232,121,249,0.2)]">
-                  <Lock className="h-6 w-6 text-fuchsia-300" />
+                <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-purple-400/40 bg-purple-950/50 shadow-[0_0_32px_rgba(168,85,247,0.45)]">
+                  <Lock className="h-7 w-7 text-purple-200" />
                 </div>
-                <GradientHeading>{t.private.title}</GradientHeading>
+                <HoloHeading>{t.private.title}</HoloHeading>
                 <p className="mt-2 text-sm leading-relaxed text-zinc-400">{t.private.desc}</p>
               </div>
-              <span className="inline-flex w-fit items-center gap-2 rounded-full border border-fuchsia-500/40 bg-fuchsia-950/50 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider text-fuchsia-200">
-                <Shield className="h-3.5 w-3.5" />
-                {t.private.badge}
-              </span>
+              <div className="space-y-2">
+                <span className="inline-flex items-center gap-2 rounded-full border border-fuchsia-500/40 bg-fuchsia-950/40 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider text-fuchsia-200 shadow-[0_0_20px_rgba(232,121,249,0.25)]">
+                  <Shield className="h-3.5 w-3.5" />
+                  {t.private.badge}
+                </span>
+                <p className="font-mono text-[10px] text-purple-300/80">● {t.private.status}</p>
+              </div>
             </div>
-          </BentoCard>
+          </HoloCard>
         </div>
       </div>
     </section>
   );
 }
+
+
