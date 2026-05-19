@@ -67,6 +67,8 @@ const T = {
     integrations: {
       title: "Deep App Integrations",
       desc: "Wallet, design, docs, and cloud services orbit Mira through encrypted sync channels.",
+      hub: "Mira sync core",
+      synced: "synced",
     },
     experts: {
       title: "Specialized AI Experts",
@@ -132,10 +134,42 @@ const T = {
       { icon: Clapperboard, text: "Take movie notes" },
     ],
     integrationsList: [
-      { icon: Wallet, name: "TON", full: "TON Wallet", glow: "cyan" as const },
-      { icon: Palette, name: "Canva", full: "Canva", glow: "fuchsia" as const },
-      { icon: FileText, name: "Notion", full: "Notion", glow: "purple" as const },
-      { icon: Chrome, name: "Google", full: "Google", glow: "emerald" as const },
+      {
+        icon: Wallet,
+        name: "TON",
+        full: "TON Wallet",
+        category: "Wallet",
+        glow: "cyan" as const,
+        ring: "border-cyan-400/50 shadow-[0_0_22px_rgba(34,211,238,0.45)]",
+        chip: "bg-cyan-500/15 text-cyan-200",
+      },
+      {
+        icon: Palette,
+        name: "Canva",
+        full: "Canva Design",
+        category: "Design",
+        glow: "fuchsia" as const,
+        ring: "border-fuchsia-400/50 shadow-[0_0_22px_rgba(232,121,249,0.45)]",
+        chip: "bg-fuchsia-500/15 text-fuchsia-200",
+      },
+      {
+        icon: FileText,
+        name: "Notion",
+        full: "Notion",
+        category: "Productivity",
+        glow: "purple" as const,
+        ring: "border-purple-400/50 shadow-[0_0_22px_rgba(168,85,247,0.45)]",
+        chip: "bg-purple-500/15 text-purple-200",
+      },
+      {
+        icon: Chrome,
+        name: "Google",
+        full: "Google Services",
+        category: "Cloud",
+        glow: "emerald" as const,
+        ring: "border-emerald-400/50 shadow-[0_0_22px_rgba(52,211,153,0.45)]",
+        chip: "bg-emerald-500/15 text-emerald-200",
+      },
     ],
   },
   ru: {
@@ -167,6 +201,8 @@ const T = {
     integrations: {
       title: "Глубокие интеграции",
       desc: "Кошелёк, дизайн, документы и облако синхронизируются с Mira по зашифрованным каналам.",
+      hub: "ядро синхронизации Mira",
+      synced: "синхр.",
     },
     experts: {
       title: "Специализированные эксперты",
@@ -232,10 +268,42 @@ const T = {
       { icon: Clapperboard, text: "Заметки по фильмам" },
     ],
     integrationsList: [
-      { icon: Wallet, name: "TON", full: "TON Wallet", glow: "cyan" as const },
-      { icon: Palette, name: "Canva", full: "Canva", glow: "fuchsia" as const },
-      { icon: FileText, name: "Notion", full: "Notion", glow: "purple" as const },
-      { icon: Chrome, name: "Google", full: "Google", glow: "emerald" as const },
+      {
+        icon: Wallet,
+        name: "TON",
+        full: "TON Wallet",
+        category: "Кошелёк",
+        glow: "cyan" as const,
+        ring: "border-cyan-400/50 shadow-[0_0_22px_rgba(34,211,238,0.45)]",
+        chip: "bg-cyan-500/15 text-cyan-200",
+      },
+      {
+        icon: Palette,
+        name: "Canva",
+        full: "Canva Design",
+        category: "Дизайн",
+        glow: "fuchsia" as const,
+        ring: "border-fuchsia-400/50 shadow-[0_0_22px_rgba(232,121,249,0.45)]",
+        chip: "bg-fuchsia-500/15 text-fuchsia-200",
+      },
+      {
+        icon: FileText,
+        name: "Notion",
+        full: "Notion",
+        category: "Продуктивность",
+        glow: "purple" as const,
+        ring: "border-purple-400/50 shadow-[0_0_22px_rgba(168,85,247,0.45)]",
+        chip: "bg-purple-500/15 text-purple-200",
+      },
+      {
+        icon: Chrome,
+        name: "Google",
+        full: "Google Services",
+        category: "Облако",
+        glow: "emerald" as const,
+        ring: "border-emerald-400/50 shadow-[0_0_22px_rgba(52,211,153,0.45)]",
+        chip: "bg-emerald-500/15 text-emerald-200",
+      },
     ],
   },
 };
@@ -293,14 +361,17 @@ function HoloCard({
   className = "",
   glow = "cyan",
   z = 10,
+  id,
 }: {
   children: React.ReactNode;
   className?: string;
   glow?: GlowVariant;
   z?: number;
+  id?: string;
 }) {
   return (
     <article
+      id={id}
       className={`group holo-card relative flex h-full min-h-0 flex-col ${GLOW_DROP[glow]} ${className}`}
       style={{ zIndex: z }}
     >
@@ -417,60 +488,109 @@ function NanoPreview({ data }: { data: (typeof T)["en"]["previews"]["nano"] }) {
   );
 }
 
+const INTEGRATION_SLOTS = [
+  "left-[4%] top-[8%] sm:left-[2%] sm:top-[6%]",
+  "right-[4%] top-[8%] sm:right-[2%] sm:top-[6%]",
+  "left-[4%] bottom-[4%] sm:left-[2%] sm:bottom-[2%]",
+  "right-[4%] bottom-[4%] sm:right-[2%] sm:bottom-[2%]",
+] as const;
+
 function IntegrationsFlow({
   items,
+  hubLabel,
+  syncedLabel,
 }: {
   items: (typeof T)["en"]["integrationsList"];
+  hubLabel: string;
+  syncedLabel: string;
 }) {
-  const badgeGlow: Record<string, string> = {
-    cyan: "hover:shadow-[0_0_28px_rgba(34,211,238,0.55)] hover:border-cyan-400/60 hover:scale-110",
-    fuchsia: "hover:shadow-[0_0_28px_rgba(232,121,249,0.55)] hover:border-fuchsia-400/60 hover:scale-110",
-    purple: "hover:shadow-[0_0_28px_rgba(168,85,247,0.55)] hover:border-purple-400/60 hover:scale-110",
-    emerald: "hover:shadow-[0_0_28px_rgba(52,211,153,0.55)] hover:border-emerald-400/60 hover:scale-110",
+  const hoverBoost: Record<string, string> = {
+    cyan: "hover:scale-110 hover:shadow-[0_0_32px_rgba(34,211,238,0.65)]",
+    fuchsia: "hover:scale-110 hover:shadow-[0_0_32px_rgba(232,121,249,0.65)]",
+    purple: "hover:scale-110 hover:shadow-[0_0_32px_rgba(168,85,247,0.65)]",
+    emerald: "hover:scale-110 hover:shadow-[0_0_32px_rgba(52,211,153,0.65)]",
   };
 
   return (
-    <div className="relative mt-auto flex flex-1 flex-col justify-end pt-4">
+    <div className="relative mx-auto flex min-h-[200px] w-full max-w-md flex-1 flex-col justify-center py-2 lg:min-h-[220px] lg:max-w-none">
+      {/* Connection mesh */}
       <svg
-        className="pointer-events-none absolute left-[12%] right-[12%] top-1/2 z-0 h-8 -translate-y-1/2 w-[76%] overflow-visible"
-        viewBox="0 0 300 20"
-        preserveAspectRatio="none"
+        className="pointer-events-none absolute inset-0 z-0 h-full w-full"
+        viewBox="0 0 320 200"
+        preserveAspectRatio="xMidYMid meet"
         aria-hidden
       >
         <defs>
-          <linearGradient id="holo-flow-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="rgba(34,211,238,0.8)" />
-            <stop offset="50%" stopColor="rgba(168,85,247,0.9)" />
-            <stop offset="100%" stopColor="rgba(232,121,249,0.8)" />
+          <linearGradient id="holo-hub-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="rgba(34,211,238,0.9)" />
+            <stop offset="50%" stopColor="rgba(168,85,247,0.85)" />
+            <stop offset="100%" stopColor="rgba(232,121,249,0.9)" />
           </linearGradient>
         </defs>
         <path
-          d="M 10 10 Q 75 2, 150 10 T 290 10"
+          d="M 48 42 L 160 100 L 272 42"
           fill="none"
-          stroke="url(#holo-flow-grad)"
-          strokeWidth="1.5"
-          className="holo-flow-line opacity-60"
+          stroke="url(#holo-hub-grad)"
+          strokeWidth="1.25"
+          className="holo-flow-line opacity-50"
         />
+        <path
+          d="M 48 158 L 160 100 L 272 158"
+          fill="none"
+          stroke="url(#holo-hub-grad)"
+          strokeWidth="1.25"
+          className="holo-flow-line opacity-50"
+          style={{ animationDirection: "reverse" }}
+        />
+        <path
+          d="M 48 42 L 48 158 M 272 42 L 272 158"
+          fill="none"
+          stroke="url(#holo-hub-grad)"
+          strokeWidth="1"
+          className="holo-flow-line opacity-35"
+        />
+        <circle cx="160" cy="100" r="28" fill="rgba(34,211,238,0.06)" stroke="url(#holo-hub-grad)" strokeWidth="1" />
       </svg>
-      <div className="relative z-10 flex flex-wrap items-center justify-between gap-4 sm:flex-nowrap sm:gap-2">
-        {items.map(({ icon: Icon, name, full, glow }) => (
+
+      {/* Central hub */}
+      <div className="absolute left-1/2 top-1/2 z-20 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1">
+        <div className="relative flex h-16 w-16 items-center justify-center rounded-full border border-cyan-400/40 bg-black/70 shadow-[0_0_40px_rgba(34,211,238,0.35),0_0_60px_rgba(168,85,247,0.2)] backdrop-blur-xl">
+          <div
+            aria-hidden
+            className="absolute inset-0 animate-pulse rounded-full bg-gradient-to-br from-cyan-500/20 via-purple-500/15 to-fuchsia-500/20"
+          />
+          <Zap className="relative h-6 w-6 text-cyan-300" />
+        </div>
+        <span className="font-mono text-[9px] uppercase tracking-widest text-cyan-300/90">{hubLabel}</span>
+      </div>
+
+      {/* Orbiting badges */}
+      {items.map((item, i) => {
+        const Icon = item.icon;
+        const slot = INTEGRATION_SLOTS[i] ?? INTEGRATION_SLOTS[0];
+        return (
           <button
-            key={name}
+            key={item.name}
             type="button"
-            className={`flex flex-col items-center gap-2 transition-all duration-300 ${badgeGlow[glow]}`}
+            className={`group absolute z-30 flex w-[42%] max-w-[130px] flex-col items-center gap-1.5 transition-all duration-300 sm:w-auto sm:max-w-none ${slot} ${hoverBoost[item.glow]}`}
           >
             <span
-              className={`flex h-14 w-14 items-center justify-center rounded-2xl border border-zinc-700/80 bg-zinc-950/80 backdrop-blur-xl`}
+              className={`flex h-12 w-12 items-center justify-center rounded-2xl border bg-zinc-950/90 backdrop-blur-xl transition-transform duration-300 group-hover:scale-105 sm:h-14 sm:w-14 ${item.ring}`}
             >
-              <Icon className="h-6 w-6 text-zinc-100" />
+              <Icon className="h-5 w-5 text-zinc-100 sm:h-6 sm:w-6" />
             </span>
-            <span className="font-mono text-[10px] text-zinc-400 sm:text-xs">
-              <span className="text-zinc-200">{name}</span>
-              <span className="hidden sm:inline"> · {full}</span>
+            <span className="text-center font-mono text-[10px] leading-tight text-zinc-200 sm:text-xs">
+              {item.full}
+            </span>
+            <span className="flex items-center gap-1">
+              <span className={`rounded px-1.5 py-0.5 font-mono text-[8px] uppercase tracking-wide ${item.chip}`}>
+                {item.category}
+              </span>
+              <span className="font-mono text-[8px] text-emerald-400/90">● {syncedLabel}</span>
             </span>
           </button>
-        ))}
-      </div>
+        );
+      })}
     </div>
   );
 }
@@ -598,6 +718,7 @@ export function MiraEcosystem({ lang }: MiraEcosystemProps) {
             glow="cyan"
             z={15}
             className="h-full min-h-[300px] md:col-span-2 lg:col-span-5 lg:col-start-8 lg:row-start-1"
+            id="integrations"
           >
             <CardInner>
               <CardHeader>
@@ -605,7 +726,11 @@ export function MiraEcosystem({ lang }: MiraEcosystemProps) {
                 <p className="text-sm leading-relaxed text-zinc-400">{t.integrations.desc}</p>
               </CardHeader>
               <CardBody className="justify-end">
-                <IntegrationsFlow items={t.integrationsList} />
+                <IntegrationsFlow
+                  items={t.integrationsList}
+                  hubLabel={t.integrations.hub}
+                  syncedLabel={t.integrations.synced}
+                />
               </CardBody>
             </CardInner>
           </HoloCard>
@@ -680,6 +805,7 @@ export function MiraEcosystem({ lang }: MiraEcosystemProps) {
     </section>
   );
 }
+
 
 
 
